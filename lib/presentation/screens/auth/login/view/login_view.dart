@@ -49,7 +49,7 @@ class _LoginViewState extends State<LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Delta Dahab \n Hotel',
+                    'Welcome \n back !',
                     textAlign: TextAlign.center,
                     style: AppStyles.appBar.copyWith(
                       fontSize: 35,
