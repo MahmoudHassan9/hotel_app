@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_app/base/base_state/base_state.dart';
 import 'package:hotel_app/core/extensions/validate_ex.dart';
@@ -7,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_styles.dart';
+import '../../../../../core/utils/constants.dart';
 import '../../../../../routing/routes.dart';
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/title_and_text_form_field.dart';
@@ -74,9 +78,12 @@ class _RegisterViewState extends State<RegisterView> {
 
                   case ErrorState():
                     Future.delayed(Duration.zero, () {
+                      Navigator.pop(context);
                       AppDialogs.showMessage(
                         context,
-                        message: state.exception.toString(),
+                        message: state.exception != null
+                            ? extractErrorMessage(state.exception!)
+                            : state.errorMessage!,
                         color: Colors.red,
                       );
                     });
@@ -217,5 +224,19 @@ class _RegisterViewState extends State<RegisterView> {
         ),
       ),
     );
+  }
+
+  String extractErrorMessage(FirebaseAuthException e) {
+    late String message;
+    if (e.code == AppConstants.weakPass) {
+      message = 'The password provided is too weak';
+    } else if (e.code == AppConstants.emailInUse) {
+      message = 'The account already exists for that email';
+    } else if (e.code == AppConstants.invalidEmail) {
+      message = 'The Email addresse is badly formated';
+    } else {
+      message = e.toString();
+    }
+    return message;
   }
 }

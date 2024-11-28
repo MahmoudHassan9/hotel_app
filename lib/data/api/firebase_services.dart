@@ -31,4 +31,23 @@ abstract class FirebaseServices {
     DocumentReference usersDocuments = usersCollection.doc(userModel.uid);
     usersDocuments.set(userModel.toJson());
   }
+
+  static Future<void> login(
+    context, {
+    required String email,
+    required String password,
+  }) async {
+    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    DocumentSnapshot userDoucumentSnapshot = await FirebaseFirestore.instance
+        .collection(UserDM.collectionName)
+        .doc(credential.user!.uid)
+        .get();
+
+    Map<String, dynamic> userJson =
+        userDoucumentSnapshot.data() as Map<String, dynamic>;
+    userModel = UserDM.fromJson(userJson);
+  }
 }
