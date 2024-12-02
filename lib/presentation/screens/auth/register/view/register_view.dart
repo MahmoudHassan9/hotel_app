@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:hotel_app/base/base_state/base_state.dart';
 import 'package:hotel_app/core/extensions/validate_ex.dart';
 import 'package:hotel_app/core/utils/app_dialogs.dart';
+import 'package:hotel_app/data/api/firebase_services.dart';
+import 'package:hotel_app/data/datasource_impl/register_firebase_data_source_impl.dart';
+import 'package:hotel_app/data/repo_impl/register_repo_impl.dart';
+import 'package:hotel_app/domain/usecases/register_use_case.dart';
 import 'package:hotel_app/presentation/screens/auth/register/viewModel/register_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +61,15 @@ class _RegisterViewState extends State<RegisterView> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ChangeNotifierProvider(
-            create: (context) => RegisterViewModel(),
+            create: (context) => RegisterViewModel(
+              useCase: RegisterUseCase(
+                repo: RegisterRepoImpl(
+                  registerDataSource: RegisterFirebaseDataSourceImpl(
+                    firebaseServices: FirebaseServices(),
+                  ),
+                ),
+              ),
+            ),
             child: Consumer<RegisterViewModel>(
               builder: (provideContext, viewModel, child) {
                 var state = viewModel.state;

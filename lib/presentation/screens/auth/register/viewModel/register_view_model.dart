@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:hotel_app/base/base_state/base_state.dart';
 import 'package:hotel_app/base/base_viewModel/base_view_model.dart';
 import 'package:hotel_app/data/api/firebase_services.dart';
+import 'package:hotel_app/domain/usecases/register_use_case.dart';
 
 class RegisterViewModel extends BaseViewModel {
-  RegisterViewModel() : super(state: InitialState());
+  RegisterViewModel({required this.useCase}) : super(state: InitialState());
+  RegisterUseCase useCase;
 
   void register({
     required context,
@@ -16,13 +18,7 @@ class RegisterViewModel extends BaseViewModel {
   }) async {
     try {
       emit(LoadingState());
-      await FirebaseServices.register(
-        context,
-        email: email,
-        password: password,
-        name: name,
-        phoneNumber: phoneNumber,
-      );
+      await useCase.execute(email, password, name, phoneNumber);
       emit(SuccessState());
     } on FirebaseAuthException catch (e) {
       emit(ErrorState(exception: e));

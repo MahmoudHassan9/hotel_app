@@ -4,14 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/utils/constants.dart';
 import '../models/user_model.dart';
 
-abstract class FirebaseServices {
+class FirebaseServices {
   static CollectionReference usersCollection =
       FirebaseFirestore.instance.collection(UserDM.collectionName);
 
   static late UserDM userModel;
 
-  static Future<void> register(
-    context, {
+  Future<void> register({
     required String email,
     required String password,
     required String name,
@@ -32,8 +31,7 @@ abstract class FirebaseServices {
     usersDocuments.set(userModel.toJson());
   }
 
-  static Future<void> login(
-    context, {
+  Future<void> login({
     required String email,
     required String password,
   }) async {

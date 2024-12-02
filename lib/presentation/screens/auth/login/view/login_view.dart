@@ -3,12 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_app/base/base_state/base_state.dart';
 import 'package:hotel_app/core/extensions/validate_ex.dart';
+import 'package:hotel_app/data/datasource_impl/login_firebase_data_source_impl.dart';
+import 'package:hotel_app/data/repo_impl/login_repo_impl.dart';
+import 'package:hotel_app/domain/repo_contract/login_repo.dart';
+import 'package:hotel_app/domain/usecases/login_use_case.dart';
 import 'package:hotel_app/presentation/screens/auth/login/viewModel/login_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_dialogs.dart';
 import '../../../../../core/utils/app_styles.dart';
+import '../../../../../data/api/firebase_services.dart';
 import '../../../../../routing/routes.dart';
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/title_and_text_form_field.dart';
@@ -48,7 +53,15 @@ class _LoginViewState extends State<LoginView> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ChangeNotifierProvider(
-            create: (context) => LoginViewModel(),
+            create: (context) => LoginViewModel(
+              useCase: LoginUseCase(
+                repo: LoginRepoImpl(
+                  loginDataSource: LoginFirebaseDataSourceImpl(
+                    firebaseServices: FirebaseServices(),
+                  ),
+                ),
+              ),
+            ),
             child: Consumer<LoginViewModel>(
               builder: (context, viewModel, child) {
                 var state = viewModel.state;
@@ -134,9 +147,7 @@ class _LoginViewState extends State<LoginView> {
                             text: 'Login',
                             onPressed: () async {
                               if (!formKey.currentState!.validate()) return;
-
                               viewModel.login(
-                                context: context,
                                 email: emailController.text,
                                 password: passwordController.text,
                               );
