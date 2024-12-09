@@ -33,7 +33,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-
     emailController = TextEditingController();
     passwordController = TextEditingController();
   }
@@ -41,7 +40,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   void dispose() {
     super.dispose();
-
     emailController.dispose();
     passwordController.dispose();
   }
