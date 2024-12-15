@@ -5,13 +5,14 @@ class UserDM {
   String? uid;
   String? name;
   String? phoneNumber;
-
+  bool? isAdmin;
 
   UserDM({
     required this.email,
     required this.uid,
     required this.name,
     required this.phoneNumber,
+    this.isAdmin,
   });
 
   UserDM.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,7 @@ class UserDM {
     uid = json['uid'];
     name = json['name'];
     phoneNumber = json['phoneNumber'];
+    isAdmin = json['isAdmin'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,6 +29,7 @@ class UserDM {
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
+      'isAdmin': isAdmin,
     };
   }
 }

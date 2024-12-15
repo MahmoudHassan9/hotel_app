@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hotel_app/presentation/screens/auth/login/view/login_view.dart';
-import 'package:hotel_app/presentation/screens/auth/register/view/register_view.dart';
 import 'package:hotel_app/routing/routes.dart';
 
-import '../presentation/screens/home/home.dart';
+import '../features/user/presentation/screens/auth/login/view/login_view.dart';
+import '../features/user/presentation/screens/auth/register/view/register_view.dart';
+import '../features/user/presentation/screens/home_screen/home_screen.dart';
 
 abstract class AppRouter {
   static Route? router(RouteSettings routeSettings) {
@@ -21,7 +21,7 @@ abstract class AppRouter {
 
       case AppRoutes.home:
         return MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const UserHomeScreen(),
         );
     }
     return null;

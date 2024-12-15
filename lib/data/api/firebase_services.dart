@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../core/utils/constants.dart';
 import '../models/user_model.dart';
 
+@singleton
 class FirebaseServices {
   static CollectionReference usersCollection =
       FirebaseFirestore.instance.collection(UserDM.collectionName);
@@ -21,6 +23,7 @@ class FirebaseServices {
       email: email,
       password: password,
     );
+
     userModel = UserDM(
       email: email,
       uid: credential.user!.uid,
@@ -30,6 +33,10 @@ class FirebaseServices {
     DocumentReference usersDocuments = usersCollection.doc(userModel.uid);
     usersDocuments.set(userModel.toJson());
   }
+
+  bool isAdmin({required String email, required String password}) =>
+      email == AppConstants.adminEmail &&
+      password == AppConstants.adminPassword;
 
   Future<void> login({
     required String email,

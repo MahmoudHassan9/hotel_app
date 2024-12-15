@@ -1,9 +1,12 @@
 import 'package:hotel_app/data/date_source_contract/register_data_source.dart';
 import 'package:hotel_app/domain/repo_contract/register_repo.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: RegisterRepo)
 class RegisterRepoImpl extends RegisterRepo {
   RegisterDataSource registerDataSource;
 
+  @factoryMethod
   RegisterRepoImpl({required this.registerDataSource});
 
   @override
