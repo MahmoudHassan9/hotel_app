@@ -12,7 +12,7 @@ class UserDM {
     required this.uid,
     required this.name,
     required this.phoneNumber,
-    this.isAdmin,
+    this.isAdmin = false,
   });
 
   UserDM.fromJson(Map<String, dynamic> json) {

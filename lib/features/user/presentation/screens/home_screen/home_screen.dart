@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_app/core/di/di.dart';
+import 'package:hotel_app/features/user/presentation/tabs/profile/viewModel/user_profile_cubit.dart';
 
 import '../../tabs/booking/view/booking_view.dart';
 import '../../tabs/home/view/home_view.dart';
@@ -13,10 +16,13 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
-  List<Widget> tabs = const [
-    HomeView(),
-    BookingView(),
-    ProfileView(),
+  List<Widget> tabs =  [
+   const HomeView(),
+    const BookingView(),
+    BlocProvider(
+      create: (context) => getIt<UserProfileCubit>(),
+      child: const ProfileView(),
+    ),
   ];
   int currentIndex = 0;
 
@@ -28,7 +34,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  Widget buildBottomNavBar() => BottomNavigationBar(
+  Widget buildBottomNavBar() =>
+      BottomNavigationBar(
         onTap: (index) {
           currentIndex = index;
           setState(() {});

@@ -1,57 +1,104 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_app/core/utils/app_colors.dart';
+import 'package:hotel_app/core/utils/constants.dart';
+import 'package:hotel_app/routing/routes.dart';
 
 import '../../../../../../core/utils/app_styles.dart';
+import '../../../../../../data/models/room_model.dart';
+import '../../../../../admin/presentation/tabs/rooms/viewModel/rooms_list_cubit.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<RoomsListCubit>(context).getRoomsList('Explore List');
+    BlocProvider.of<RoomsListCubit>(context).getRoomsList('MostPopular List');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-       top: 60,
-        bottom: 24,
-        left: 24,
-        right: 24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'let\'s\nExplore',
-            style: AppStyles.settingsTabLabel.copyWith(
-              fontSize: 30,
-              color: AppColors.blue,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            'Most Popular',
-            style: AppStyles.settingsTabLabel.copyWith(
-              color: AppColors.blue,
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          roomsList(),
-        ],
-      ),
+    return BlocBuilder<RoomsListCubit, RoomsListState>(
+      builder: (context, state) {
+        switch (state) {
+          case RoomsListInitialState():
+          case RoomsListSuccessState():
+            return Padding(
+              padding: const EdgeInsets.only(
+                top: 60,
+                bottom: 24,
+                left: 24,
+                right: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'let\'s\nExplore',
+                      style: AppStyles.settingsTabLabel.copyWith(
+                        fontSize: 30,
+                        color: AppColors.blue,
+                      ),
+                    ),
+                  ),
+                  exploreList(
+                    BlocProvider.of<RoomsListCubit>(context).exploreList,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'Most Popular',
+                      style: AppStyles.settingsTabLabel.copyWith(
+                        color: AppColors.blue,
+                      ),
+                    ),
+                  ),
+                  mostPopularList(
+                    BlocProvider.of<RoomsListCubit>(context).mostPopularList,
+                  ),
+                ],
+              ),
+            );
+          case RoomsListLoadingState():
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          case RoomsErrorState():
+            return Center(
+              child: Text(state.exception != null
+                  ? state.exception.toString()
+                  : state.errorMessage!),
+            );
+        }
+      },
     );
   }
 
-  Widget roomItem() => Container(
+  Widget mostPopularListItem({required RoomDM model}) => Container(
         width: 250,
         height: 300,
         decoration: BoxDecoration(
-          color: AppColors.blue,
+          color: AppColors.blue.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           children: [
             Container(
-              height: 200,
+              height: 175,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(16),
@@ -59,23 +106,32 @@ class HomeView extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(
-                      'https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+                  image: AssetImage(
+                    AppConstants.roomImage,
+                  ),
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 16,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Room name',
+                    model.title ?? '',
+                    style: AppStyles.settingsTabLabel.copyWith(
+                      fontSize: 13,
+                    ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
-                  Text('Price')
+                  Text(
+                    '\$${model.pricePerNight!}/night' ?? '',
+                  ),
                 ],
               ),
             )
@@ -83,15 +139,97 @@ class HomeView extends StatelessWidget {
         ),
       );
 
-  Widget roomsList() => SizedBox(
-        height: 300,
+  Widget mostPopularList(list) => Expanded(
+        child: ListView.separated(
+          padding: EdgeInsets.zero,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.roomDetails,
+                arguments: list[index],
+              );
+            },
+            child: mostPopularListItem(
+              model: list[index],
+            ),
+          ),
+          itemCount: list.length,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 15,
+          ),
+        ),
+      );
+
+  Widget exploreList(list) => SizedBox(
+        height: 200,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => roomItem(),
-          itemCount: 10,
+          itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.roomDetails,
+                arguments: list[index],
+              );
+            },
+            child: exploreListItem(
+              model: list[index],
+            ),
+          ),
+          itemCount: list.length,
           separatorBuilder: (context, index) => const SizedBox(
             width: 15,
           ),
+        ),
+      );
+
+  Widget exploreListItem({required RoomDM model}) => Container(
+        width: 200,
+        height: 150,
+        decoration: BoxDecoration(
+          color: AppColors.blue.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 120,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(16),
+                  topLeft: Radius.circular(16),
+                ),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(
+                    AppConstants.roomImage,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    model.title ?? '',
+                    style: AppStyles.settingsTabLabel.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    '\$${model.pricePerNight!}/night' ?? '',
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       );
 }

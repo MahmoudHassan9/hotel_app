@@ -119,7 +119,7 @@ class _RegisterViewState extends State<RegisterView> {
                           height: 60,
                         ),
                         TitleAndTextFormField(
-                          fullNameController: fullNameController,
+                          controller: fullNameController,
                           title: 'Full Name',
                           hint: 'Enter your full name',
                           validator: (input) {
@@ -130,7 +130,7 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                         ),
                         TitleAndTextFormField(
-                          fullNameController: phoneNumberController,
+                          controller: phoneNumberController,
                           title: 'Phone Number',
                           hint: 'Enter your Number',
                           validator: (input) {
@@ -141,7 +141,7 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                         ),
                         TitleAndTextFormField(
-                          fullNameController: emailController,
+                          controller: emailController,
                           title: 'E-mail',
                           hint: 'Enter your email',
                           validator: (input) {
@@ -154,7 +154,7 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                         ),
                         TitleAndTextFormField(
-                          fullNameController: passwordController,
+                          controller: passwordController,
                           title: 'Password',
                           hint: 'Enter your password',
                           isObscure: true,
@@ -166,7 +166,7 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                         ),
                         TitleAndTextFormField(
-                          fullNameController: confirmPasswordController,
+                          controller: confirmPasswordController,
                           title: 'Confirm Password',
                           hint: 'Confirm password',
                           isObscure: true,

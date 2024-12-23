@@ -72,7 +72,7 @@ class _LoginViewState extends State<LoginView> {
 
                       Navigator.pushReplacementNamed(
                         context,
-                        AppRoutes.home,
+                        AppRoutes.userHome,
                       );
                       AppDialogs.showMessage(
                         context,
@@ -89,6 +89,19 @@ class _LoginViewState extends State<LoginView> {
                             ? extractErrorMessage(state.exception!)
                             : state.errorMessage!,
                         color: Colors.red,
+                      );
+                    });
+                  case AdminLoginSuccessState():
+                    Future.delayed(Duration.zero, () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.adminHome,
+                      );
+                      AppDialogs.showMessage(
+                        context,
+                        message: 'logged in Successfully',
+                        color: Colors.green,
                       );
                     });
                 }
@@ -112,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                           height: 60,
                         ),
                         TitleAndTextFormField(
-                          fullNameController: emailController,
+                          controller: emailController,
                           title: 'E-mail',
                           hint: 'Enter your email',
                           validator: (input) {
@@ -125,7 +138,7 @@ class _LoginViewState extends State<LoginView> {
                           },
                         ),
                         TitleAndTextFormField(
-                          fullNameController: passwordController,
+                          controller: passwordController,
                           isObscure: true,
                           title: 'Password',
                           hint: 'Enter your password',
